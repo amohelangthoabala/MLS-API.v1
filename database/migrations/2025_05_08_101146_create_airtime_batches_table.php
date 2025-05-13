@@ -17,6 +17,8 @@ return new class extends Migration
             $table->unsignedInteger('denomination');
             $table->unsignedInteger('count');
             $table->decimal('purchase_price', 8, 2);
+            $table->enum('status', ['available', 'assigned', 'sold'])->default('available');
+            $table->foreignId('agent_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
         });
