@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\VoucherResource\Pages;
-use App\Filament\Resources\VoucherResource\RelationManagers;
-use App\Models\Voucher;
+use App\Filament\Resources\AgentResource\Pages;
+use App\Filament\Resources\AgentResource\RelationManagers;
+use App\Models\Agent;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class VoucherResource extends Resource
+class AgentResource extends Resource
 {
-    protected static ?string $model = Voucher::class;
+    protected static ?string $model = Agent::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -56,9 +56,9 @@ class VoucherResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListVouchers::route('/'),
-            'create' => Pages\CreateVoucher::route('/create'),
-            'edit' => Pages\EditVoucher::route('/{record}/edit'),
+            'index' => Pages\ListAgents::route('/'),
+            'create' => Pages\CreateAgent::route('/create'),
+            'edit' => Pages\EditAgent::route('/{record}/edit'),
         ];
     }
 }
