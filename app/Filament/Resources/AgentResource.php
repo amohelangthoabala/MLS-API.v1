@@ -12,6 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+
 
 class AgentResource extends Resource
 {
@@ -23,7 +26,22 @@ class AgentResource extends Resource
     {
         return $form
             ->schema([
-                //
+
+                TextInput::make('user_id')
+                ->required()
+                ->numeric(20),
+
+                TextInput::make('agent_code')
+                ->required()
+                ->maxLength(255),
+
+                TextInput::make('balance')
+                ->required()
+                ->numeric(10.2),
+                // ->prefix(M),
+
+
+                
             ]);
     }
 
@@ -31,6 +49,10 @@ class AgentResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('user_id')->searchable(),
+                TextColumn::make('agent_code'),
+                TextColumn::make('balance'),
+                // TextColumn::make('created_at')->dateTime('d M Y'),
                 //
             ])
             ->filters([
