@@ -17,6 +17,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Facades\Filament;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -54,5 +55,20 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    public function boot()
+    {
+        Filament::serving(function () {
+            Filament::registerNavigationGroups([
+                'Admin',
+                'Vouchers',
+                'Transactions',
+            ]);
+        });
+
+        Filament::auth(function () {
+            return auth()->check() && auth()->user()->role === 'admin';
+});
     }
 }

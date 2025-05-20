@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\VoucherResource\Pages;
+namespace App\Filament\Resources\PaymentResource\Pages;
 
-use App\Filament\Resources\VoucherResource;
+use App\Filament\Resources\PaymentResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditVoucher extends EditRecord
+class EditPayment extends EditRecord
 {
-    protected static string $resource = VoucherResource::class;
+    protected static string $resource = PaymentResource::class;
 
     protected function getHeaderActions(): array
     {
