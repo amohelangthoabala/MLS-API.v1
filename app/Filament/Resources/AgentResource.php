@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\Select;
 
 
 class AgentResource extends Resource
@@ -27,9 +28,12 @@ class AgentResource extends Resource
         return $form
             ->schema([
 
-                TextInput::make('user_id')
-                ->required()
-                ->numeric(20),
+
+                Select::make('user_id')
+                ->label('User') // optional label
+                ->relationship('user', 'name') // 'user' matches your relationship method, 'name' is the column shown in the dropdown
+                ->searchable()
+                ->required(),
 
                 TextInput::make('agent_code')
                 ->required()
@@ -52,7 +56,7 @@ class AgentResource extends Resource
                 TextColumn::make('user_id')->searchable(),
                 TextColumn::make('agent_code'),
                 TextColumn::make('balance'),
-                // TextColumn::make('created_at')->dateTime('d M Y'),
+                TextColumn::make('created_at')->dateTime('d M Y'),
                 //
             ])
             ->filters([
