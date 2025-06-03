@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('agents', function (Blueprint $table) {
+        Schema::create('merchant_user', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('agent_code')->unique();
-            $table->decimal('balance', 10, 2)->default(0);
+            $table->foreignId('merchant_id')->constrained()->onDelete('cascade');
+            $table->string('role')->nullable(); // e.g., owner, cashier
             $table->timestamps();
+
+            
+            $table->unique(['user_id', 'merchant_id']); // prevent duplicate entries
         });
     }
 
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('agents');
+        Schema::dropIfExists('merchant_user');
     }
 };

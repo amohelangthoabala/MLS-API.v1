@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('allocations', function (Blueprint $table) {
+        Schema::create('merchants', function (Blueprint $table) {
             $table->id();
-            // $table->foreignId('agent_id')->constrained()->onDelete('cascade');
-            // $table->string('denomination');
-            // $table->integer('quantity');
+            $table->string('name'); // shop name
+            $table->string('code')->unique(); // AGT0001 or MCH0001
+            $table->decimal('airtime_balance', 12, 2)->default(0);
+            $table->enum('type', ['agent', 'merchant'])->default('merchant');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('allocations');
+        Schema::dropIfExists('merchants');
     }
 };

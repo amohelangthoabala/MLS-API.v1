@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\AirtimeVoucherResource\Pages;
-use App\Filament\Resources\AirtimeVoucherResource\RelationManagers;
-use App\Models\AirtimeVoucher;
+use App\Filament\Resources\VouchersResource\Pages;
+use App\Filament\Resources\VouchersResource\RelationManagers;
+use App\Models\Vouchers;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,14 +12,13 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextColumn; 
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select; 
+use Filament\Forms\Components\Select;
 
-
-class AirtimeVoucherResource extends Resource
+class VouchersResource extends Resource
 {
-    protected static ?string $model = AirtimeVoucher::class;
+    protected static ?string $model = Vouchers::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -27,7 +26,7 @@ class AirtimeVoucherResource extends Resource
     {
         return $form
             ->schema([
-        TextInput::make('code')
+                TextInput::make('code')
             ->label('Voucher Code')
             ->required()
             ->unique(ignoreRecord: true),
@@ -87,9 +86,9 @@ class AirtimeVoucherResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAirtimeVouchers::route('/'),
-            'create' => Pages\CreateAirtimeVoucher::route('/create'),
-            'edit' => Pages\EditAirtimeVoucher::route('/{record}/edit'),
+            'index' => Pages\ListVouchers::route('/'),
+            'create' => Pages\CreateVouchers::route('/create'),
+            'edit' => Pages\EditVouchers::route('/{record}/edit'),
         ];
     }
 }

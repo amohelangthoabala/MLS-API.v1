@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('allocations', function (Blueprint $table) {
+        Schema::create('mobile_money_providers', function (Blueprint $table) {
             $table->id();
-            // $table->foreignId('agent_id')->constrained()->onDelete('cascade');
-            // $table->string('denomination');
-            // $table->integer('quantity');
+            $table->string('name');
+            $table->string('api_url')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('allocations');
+        Schema::dropIfExists('mobile_money_providers');
     }
 };
