@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->enum('role', ['admin', 'agent'])->default('agent');
+            $table->string('name'); // user's personal name
+            $table->string('phone')->unique();
+            $table->string('email')->nullable()->unique();
+            $table->string('password')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_phone_verified')->default(false);
+           // $table->foreignId('profile_id')->nullable()->constrained('profiles'); // optional polymorphic
+            //$table->foreignId('merchant_id')->nullable()->constrained()->onDelete('set null');
             $table->rememberToken();
             $table->timestamps();
         });
