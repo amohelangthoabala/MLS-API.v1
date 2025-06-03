@@ -6,11 +6,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -19,9 +21,11 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'phone',
         'email',
         'password',
-        'role',
+        'is_active',
+        'is_phone_verified',
     ];
 
     /**
@@ -34,9 +38,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    public function agent()
+    public function merchants(): BelongsToMany
     {
-        return $this->hasOne(Agent::class);
+        return $this->belongsToMany(Merchant::class)
+                    ->withPivot('role')
+                    ->withTimestamps();
     }
 
     /**
@@ -50,5 +56,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->hasRole('admin');
     }
 }

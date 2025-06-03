@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('allocations', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id();
             // $table->foreignId('agent_id')->constrained()->onDelete('cascade');
-            // $table->string('denomination');
-            // $table->integer('quantity');
+            // $table->foreignId('mobile_money_provider_id')->constrained();
+            $table->decimal('amount', 10, 2);
+            $table->string('transaction_reference')->unique();
+            $table->enum('status', ['pending', 'confirmed', 'failed'])->default('pending');
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('allocations');
+        Schema::dropIfExists('payments');
     }
 };

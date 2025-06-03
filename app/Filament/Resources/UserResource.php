@@ -3,19 +3,17 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Hash;
-use Filament\Tables\Columns\TextColumn;
+use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource
 {
@@ -23,62 +21,55 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Admin'; // Optional for grouping
+
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                 TextInput::make('name')
-                ->required()
-                ->maxLength(255),
-
-                TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->unique(ignoreRecord: true),
-
-                Select::make('role')
-                    ->options([
-                        'admin' => 'Admin',
-                        'agent' => 'Agent',
-                    ])
-                    ->required(),
-
-                TextInput::make('password')
-                    ->password()
-                    ->required(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\CreateRecord)
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                    ->label('Password'),
-                    ]);
+        return $form->schema([
+            TextInput::make('name')->required(),
+            TextInput::make('phone')->required()->unique(ignoreRecord: true),
+            TextInput::make('email')->email()->nullable()->unique(ignoreRecord: true),
+            TextInput::make('password')
+                ->password()
+                ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
+                ->required(fn ($context) => $context === 'create'),
+            Toggle::make('is_active'),
+            Select::make('roles')
+                ->label('System Role')
+                ->multiple()
+                ->relationship('roles', 'name')
+                ->preload(),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-              //  TextColumn::make('name')->searchable(),
-                TextColumn::make('email')->searchable(),
-                TextColumn::make('role')->badge()->color(fn ($state) => $state === 'admin' ? 'success' : 'warning'),
-                TextColumn::make('created_at')->dateTime('d M Y'),
-            ])
-            ->filters([
-                //
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('phone'),
+                Tables\Columns\TextColumn::make('roles.name')->label('Role')->badge(),
+                Tables\Columns\IconColumn::make('is_active')->boolean(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->visible(fn () => auth()->user()->can('view_user')),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn () => auth()->user()->can('update_user')),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn () => auth()->user()->can('delete_user')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => auth()->user()->can('delete_user')),
                 ]),
             ]);
     }
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
