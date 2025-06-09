@@ -5,13 +5,17 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MerchantResource\Pages;
 use App\Filament\Resources\MerchantResource\RelationManagers;
 use App\Models\Merchant;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\MultiSelect;
+use Illuminate\Support\Facades\Auth;
 
 class MerchantResource extends Resource
 {
@@ -32,6 +36,13 @@ class MerchantResource extends Resource
                 ->numeric()
                 ->prefix('M')
                 ->default(0),
+
+                MultiSelect::make('users')
+                ->label('User')
+                ->relationship('users', 'name') // 'name' is the column in the users table
+                ->searchable()
+                ->preload()
+                ->required(), // optional
             ]);
     }
 
@@ -42,6 +53,11 @@ class MerchantResource extends Resource
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('code'),
                 Tables\Columns\TextColumn::make('type'),
+                TextColumn::make('users_list')
+                ->label('User')
+                ->getStateUsing(function ($record) {
+                    return $record->users->pluck('name');
+                }),
                 Tables\Columns\TextColumn::make('airtime_balance')->money('LSL'),
             ])
             ->filters([
@@ -72,4 +88,20 @@ class MerchantResource extends Resource
             'edit' => Pages\EditMerchant::route('/{record}/edit'),
         ];
     }
+
+    public static function getEloquentQuery(): Builder
+{
+    $user = Auth::user();
+
+    // Example role check — adjust based on your logic
+    // if ($user->hasRole('super_admin')) {
+    //     return parent::getEloquentQuery();
+    // }
+
+    return parent::getEloquentQuery()
+        ->whereHas('users', function ($query) use ($user) {
+            $query->where('users.id', $user->id);
+        });
+}
+
 }
