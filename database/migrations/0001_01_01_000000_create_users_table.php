@@ -20,7 +20,6 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->boolean('is_phone_verified')->default(false);
            // $table->foreignId('profile_id')->nullable()->constrained('profiles'); // optional polymorphic
-            //$table->foreignId('merchant_id')->nullable()->constrained()->onDelete('set null');
             $table->rememberToken();
             $table->timestamps();
         });
