@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Agent extends Model
 {
-    protected $fillable = ['user_id', 'airtime_balance'];
+    protected $fillable = ['user_id', 'airtime_balance', 'agent_code','balance'];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        // return $this->belongsTo(User::class);
+        return $this->belongsTo(\App\Models\User::class);
     }
 
     public function vouchers()
