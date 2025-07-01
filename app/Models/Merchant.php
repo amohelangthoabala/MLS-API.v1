@@ -21,4 +21,10 @@ class Merchant extends Model
                     ->withPivot('role')
                     ->withTimestamps();
     }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class);
+    }
+
 }
