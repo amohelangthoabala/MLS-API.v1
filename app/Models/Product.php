@@ -13,8 +13,11 @@ class Product extends Model
         'name',
         'type',
         'provider',
-        'available',
-        'commission_rate'
+        'denominations',
+        'is_available',
+        'agent_commission',
+        'mls_commission',
+        'balance',
     ];
 
     public function variants()
@@ -26,4 +29,13 @@ class Product extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    protected $casts = [
+        'denominations' => 'array',
+        'is_available' => 'boolean',
+        'agent_commission' => 'float',
+        'mls_commission' => 'float',
+        'balance' => 'float',
+    ];
+
 }
