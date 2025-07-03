@@ -15,8 +15,7 @@ class Product extends Model
         'provider',
         'denominations',
         'is_available',
-        'agent_commission',
-        'mls_commission',
+        'commission_rate',
         'balance',
     ];
 
@@ -33,8 +32,7 @@ class Product extends Model
     protected $casts = [
         'denominations' => 'array',
         'is_available' => 'boolean',
-        'agent_commission' => 'float',
-        'mls_commission' => 'float',
+        'commission' => 'float',
         'balance' => 'float',
     ];
 

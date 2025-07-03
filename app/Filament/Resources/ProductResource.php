@@ -103,17 +103,13 @@ class ProductResource extends Resource
 
 
 
-                Toggle::make('is_available')->label('Available'),
+                Toggle::make('available')->label('Available'),
 
-                TextInput::make('agent_commission')
-                    ->label("Agent's Cut (%)")
+                TextInput::make('commission_rate')
+                    ->label("Commission(%)")
                     ->numeric()
                     ->required(),
 
-                TextInput::make('mls_commission')
-                    ->label("MLS's Cut (%)")
-                    ->numeric()
-                    ->required(),
 
                 TextInput::make('balance')
                     ->numeric()
@@ -141,11 +137,10 @@ class ProductResource extends Resource
                     ->color('primary')
 
                     ->separator(', '),
-                BooleanColumn::make('is_available')->label('Available'),
+                BooleanColumn::make('available')->label('Available'),
 
-                TextColumn::make('agent_commission')->label("Agent's Cut"),
+                TextColumn::make('commission_rate')->label("Commission(%)"),
 
-                TextColumn::make('mls_commission')->label("MLS's Cut"),
 
                 TextColumn::make('balance')
                     ->label('Balance (LSL)')
