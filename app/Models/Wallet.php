@@ -10,6 +10,7 @@ class Wallet extends Model
     use HasFactory;
 
     protected $fillable = ['merchant_id', 'balance'];
+    
 
     public function merchant()
     {
@@ -20,4 +21,15 @@ class Wallet extends Model
     {
         return $this->hasMany(WalletTransaction::class);
     }
+
+    protected static function booted()
+    {
+        static::creating(function (Wallet $wallet) {
+            if (is_null($wallet->balance) && $wallet->merchant) {
+                $wallet->balance = $wallet->merchant->balance ?? 0;
+            }
+        });
+    }
+
+
 }
