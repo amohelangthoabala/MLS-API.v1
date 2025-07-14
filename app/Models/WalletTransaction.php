@@ -26,4 +26,36 @@ class WalletTransaction extends Model
     {
         return $this->belongsTo(Wallet::class);
     }
+
+    protected static function booted()
+    {
+        static::created(function (WalletTransaction $transaction) {
+            $wallet = $transaction->wallet;
+
+            if ($transaction->type === 'credit') {
+                $wallet->balance += $transaction->amount;
+            } elseif ($transaction->type === 'debit') {
+                if ($wallet->balance < $transaction->amount) {
+                    throw new \Exception('Insufficient balance.');
+                }
+
+                $wallet->balance -= $transaction->amount;
+            }
+
+            $wallet->save();
+        });
+
+        static::deleted(function (WalletTransaction $transaction) {
+            $wallet = $transaction->wallet;
+
+            if ($transaction->type === 'credit') {
+                $wallet->balance -= $transaction->amount;
+            } elseif ($transaction->type === 'debit') {
+                $wallet->balance += $transaction->amount;
+            }
+
+            $wallet->save();
+        });
+    }
+
 }
