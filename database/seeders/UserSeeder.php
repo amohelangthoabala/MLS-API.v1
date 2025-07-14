@@ -28,6 +28,6 @@ class UserSeeder extends Seeder
                 'remember_token' => Str::random(10),
             ]
         );
-        $user->assignRole('super_admin'); // 👈 This is the key line!
+        $user->assignRole('admin'); // 👈 This is the key line!
     }
 }
