@@ -9,31 +9,10 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'type',
-        'provider',
-        'denominations',
-        'is_available',
-        'commission_rate',
-        'balance',
-    ];
+    protected $fillable = ['name', 'icon', 'available'];
 
     public function variants()
     {
         return $this->hasMany(ProductVariant::class);
     }
-
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
-    }
-
-    protected $casts = [
-        'denominations' => 'array',
-        'is_available' => 'boolean',
-        'commission' => 'float',
-        'balance' => 'float',
-    ];
-
 }

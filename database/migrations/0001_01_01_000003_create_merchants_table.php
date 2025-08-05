@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_wallet_transaction', function (Blueprint $table) {
+        Schema::create('merchants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('wallet_transaction_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('product_id')->constrained();
-            $table->foreignId('product_variant_id')->nullable()->constrained();
+            $table->string('name');                 // Shop name
+            $table->string('code')->unique();       // MCH0001 / AGT0001
+            $table->enum('type', ['merchant', 'agent'])->default('merchant');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_wallet_transaction');
+        Schema::dropIfExists('merchants');
     }
 };

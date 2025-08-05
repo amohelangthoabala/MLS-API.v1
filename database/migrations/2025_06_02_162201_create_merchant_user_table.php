@@ -13,13 +13,12 @@ return new class extends Migration
     {
         Schema::create('merchant_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('merchant_id')->constrained()->onDelete('cascade');
-            $table->string('role')->nullable(); // e.g., owner, cashier
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('merchant_id')->constrained()->cascadeOnDelete();
+            $table->string('role')->nullable();  // e.g., owner, cashier
             $table->timestamps();
 
-            
-            $table->unique(['user_id', 'merchant_id']); // prevent duplicate entries
+            $table->unique(['user_id', 'merchant_id']);
         });
     }
 

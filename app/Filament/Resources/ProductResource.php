@@ -3,20 +3,17 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers;
 use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\{TextInput, Select, Toggle, Textarea, KeyValue};
-use Filament\Tables\Columns\{TextColumn, BooleanColumn};
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BooleanColumn;
+use Filament\Forms\Components\Select;
 
 class ProductResource extends Resource
 {
@@ -28,92 +25,30 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                //
-                TextInput::make('name')->required(),
-                Select::make('type')
-                    ->label('Product Type')
-                    ->options([
-                        'airtime' => 'Airtime',
-                        'electricity' => 'Electricity',
-                    ])
+                TextInput::make('name')
                     ->required()
-                    ->reactive()
-                    ->afterStateUpdated(function (callable $set, $state) {
-                        if ($state === 'electricity') {
-                            $set('provider_text', 'L.E.C');
-                            $set('provider', 'L.E.C');
-                        } else {
-                            $set('provider_text', null);
-                            $set('provider', null);
-                        }
-                    }),
+                    ->label('Product Name'),
 
-
-
-                Select::make('provider_select')
-                    ->label('Provider')
+                Select::make('icon')
+                    ->label('Icon')
                     ->options([
-                        'ETL' => 'ETL',
-                        'VCL' => 'VCL',
+                        '📱' => '📱 Airtime',
+                        '💡' => '💡 Electricity',
+                        '💰' => '💰 Bill Payment',
+                        '📲' => '📲 Mobile Money',
+                        '🎮' => '🎮 Gaming',
+                        '🚌' => '🚌 Transport',
+                        '📺' => '📺 TV Subscription',
+                        '💳' => '💳 Banking',
+                        '🛒' => '🛒 Shopping',
+                        '🏦' => '🏦 Loans',
                     ])
-                    ->reactive()
-                    ->required(fn (callable $get) => $get('type') === 'airtime')
-                    ->visible(fn (callable $get) => $get('type') === 'airtime')
-                    ->afterStateUpdated(function (callable $set, $state) {
-                        $set('provider', $state);
-                    }),
-
-                TextInput::make('provider_text')
-                    ->label('Provider')
-                    ->disabled()
-                    ->visible(fn (callable $get) => $get('type') === 'electricity'),
-
-                Hidden::make('provider')
+                    ->searchable()
                     ->required(),
 
-
-                Select::make('denominations')
-                    ->label('Denominations (Airtime)')
-                    ->multiple()
-                    ->options([
-                        'M5' => 'M5',
-                        'M10' => 'M10',
-                        'M20' => 'M20',
-                        'M50' => 'M50',
-                        'M100' => 'M100',
-                    ])
-                    ->visible(fn (callable $get) => $get('type') === 'airtime')
-                    ->required(fn (callable $get) => $get('type') === 'airtime')
-                    // ->saveAsJson()
-                    ->dehydrated(true)
-                    ->reactive(),
-
-                TextInput::make('denominations_text')
-                    ->label('Denominations (Electricity)')
-                    ->helperText('Enter values like M50,M100,M200')
-                    ->visible(fn (callable $get) => $get('type') === 'electricity')
-                    ->required(fn (callable $get) => $get('type') === 'electricity')
-                    ->afterStateHydrated(function ($component, $state) {
-                        if (is_array($state)) {
-                            $component->state(implode(',', $state));
-                        }
-                    })
-                    ->dehydrated()
-                    ->formatStateUsing(fn ($state) => is_array($state) ? implode(',', $state) : $state),
-
-
-
-                Toggle::make('available')->label('Available'),
-
-                TextInput::make('commission_rate')
-                    ->label("Commission(%)")
-                    ->numeric()
-                    ->required(),
-
-
-                TextInput::make('balance')
-                    ->numeric()
-                    ->required(),
+                Toggle::make('available')
+                    ->label('Available')
+                    ->default(true),
             ]);
     }
 
@@ -121,47 +56,20 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                //
                 TextColumn::make('name')->searchable(),
-                TextColumn::make('type'),
-                TextColumn::make('provider'),
-                
-                BadgeColumn::make('denominations')
-                    ->label('Denominations')
-                    ->getStateUsing(fn ($record) => is_array($record->denominations) 
-                        ? $record->denominations 
-                        : (is_string($record->denominations) 
-                            ? json_decode($record->denominations, true) ?? [] 
-                            : [])
-                    )
-                    ->color('primary')
-
-                    ->separator(', '),
+                TextColumn::make('icon')->label('Icon'),
                 BooleanColumn::make('available')->label('Available'),
-
-                TextColumn::make('commission_rate')->label("Commission(%)"),
-
-
-                TextColumn::make('balance')
-                    ->label('Balance (LSL)')
-                    ->sortable()
-                    ->money('LSL'),
-                    // ->prefix('M'),
-
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime('d M Y'),
-                    ])
-
-                    ->filters([
-                        //
-                    ])
-                    ->actions([
-                        Tables\Actions\EditAction::make(),
-                    ])
-                    ->bulkActions([
-                        Tables\Actions\BulkActionGroup::make([
-                            Tables\Actions\DeleteBulkAction::make(),
+            ])
+            ->filters([])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -169,7 +77,7 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            // Later we’ll add ProductVariantsRelationManager here
         ];
     }
 
